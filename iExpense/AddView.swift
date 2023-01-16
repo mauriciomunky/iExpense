@@ -13,7 +13,8 @@ struct AddView: View {
     @State private var name = ""
     @State private var type = "Personal"
     @State private var amount = 0.0
-    @ObservedObject var expenses: Expenses
+    @ObservedObject var business: Expenses
+    @ObservedObject var personal: Expenses
     @Environment(\.dismiss) var dismiss
     
     let types = ["Business", "Personal"]
@@ -25,14 +26,15 @@ struct AddView: View {
                     ForEach(types, id: \.self) {
                         Text($0)
                     }
-                }
+                }.pickerStyle(.automatic)
                 TextField("Amount", value: $amount, format: .currency(code: Locale.current.currencyCode ?? "BRL"))
                     .keyboardType(.decimalPad)
             }.navigationTitle("Add new expense")
-        }.toolbar { Button("Save") {
-            let item = ExpenseItem(name: name, type: type, amount: amount)
-            expenses.items.append(item)
-            dismiss()
+                .toolbar { Button("Save") {
+                    let item = ExpenseItem(name: name, type: type, amount: amount)
+                    if (item.type == "Personal") { personal.items.append(item)} else {business.items.append(item)}
+                    dismiss()
+        }
         }
         }
     }
@@ -40,6 +42,6 @@ struct AddView: View {
 
 struct AddView_Previews: PreviewProvider {
     static var previews: some View {
-        AddView(expenses: Expenses())
+        AddView(business: Expenses(), personal: Expenses())
     }
 }

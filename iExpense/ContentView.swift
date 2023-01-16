@@ -35,37 +35,60 @@ class Expenses: ObservableObject {
 
 struct ContentView: View {
     @State private var showingAddExpense = false
-    @StateObject var expenses = Expenses()
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+    @StateObject var business = Expenses()
+    @StateObject var personal = Expenses()
+    func removeBusiness(at offsets: IndexSet) {
+        business.items.remove(atOffsets: offsets)
+    }
+    func removePersonal(at offsets: IndexSet) {
+        personal.items.remove(atOffsets: offsets)
     }
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(expenses.items) {
-                    item in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name)
-                                .font(.headline)
-                            Text(item.type)
-                        }
+            VStack {
+                List {
+                    if (personal.items.count > 0){
+                        Text("Personal expenses").font(.title2)}
+                    ForEach(personal.items) {
+                        item in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(item.name)
+                                    .font(.headline)
+                                Text(item.type)
+                            }
+                            Spacer()
+                            if (item.amount > 10 && item.amount < 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.yellow)} else if (item.amount > 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.red)} else {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.green)}
+                        }}.onDelete(perform: removePersonal)
                         Spacer()
-                        Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL")))
-                    }
+                        if (business.items.count > 0){
+                            Text("Business expenses").font(.title2)}
+                        ForEach(business.items) {
+                            item in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(item.name)
+                                        .font(.headline)
+                                    Text(item.type)
+                                }
+                                Spacer()
+                                if (item.amount > 10 && item.amount < 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.yellow)} else if (item.amount > 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.red)} else {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.green)}
+                                }
+                    }.onDelete(perform: removeBusiness)
+                }.sheet(isPresented: $showingAddExpense) {
+                    AddView(business: Expenses(), personal: Expenses())
                 }
-            }.sheet(isPresented: $showingAddExpense) {
-                AddView(expenses: expenses)
-            }
-            .navigationTitle("iExpense")
+                .navigationTitle("iExpense")
                 .toolbar {
-                    Button {
+                    ToolbarItem(placement: .navigationBarTrailing) {Button {
                         showingAddExpense = true
                     } label: {
                         Image(systemName: "plus")
                     }
+                    }
                 }
+            }
         }
     }
 }
