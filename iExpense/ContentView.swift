@@ -57,26 +57,30 @@ struct ContentView: View {
                                 Text(item.name)
                                     .font(.headline)
                                 Text(item.type)
-                            }
+                            }.accessibilityLabel("\(item.name) \(item.amount)")
                             Spacer()
                             if (item.amount > 10 && item.amount < 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.yellow)} else if (item.amount > 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.red)} else {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.green)}
-                        }}.onDelete(perform: removePersonal)
-                        Spacer()
-                        if (business.items.count > 0){
-                            Text("Business expenses").font(.title2)}
-                        ForEach(business.items) {
-                            item in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(item.name)
-                                        .font(.headline)
-                                    Text(item.type)
-                                }
-                                Spacer()
-                                if (item.amount > 10 && item.amount < 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.yellow)} else if (item.amount > 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.red)} else {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.green)}
-                                }
+                        }
+                    }.onDelete(perform: removePersonal)
+                    
+                    Spacer()
+                    if (business.items.count > 0){
+                        Text("Business expenses").font(.title2)}
+                    ForEach(business.items) {
+                        item in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(item.name)
+                                    .font(.headline)
+                                Text(item.type)
+                            }.accessibilityLabel("\(item.name) \(item.amount)")
+                            Spacer()
+                            if (item.amount > 10 && item.amount < 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.yellow)} else if (item.amount > 100) {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.red)} else {Text(item.amount, format: .currency(code: (Locale.current.currencyCode ?? "BRL"))).foregroundColor(Color.green)}
+                        }
                     }.onDelete(perform: removeBusiness)
-                }.sheet(isPresented: $showingAddExpense) {
+                        
+                }
+                .sheet(isPresented: $showingAddExpense) {
                     AddView(business: Expenses(), personal: Expenses())
                 }
                 .navigationTitle("iExpense")
@@ -88,6 +92,7 @@ struct ContentView: View {
                     }
                     }
                 }
+
             }
         }
     }
